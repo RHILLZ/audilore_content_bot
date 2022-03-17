@@ -130,3 +130,7 @@ dmypy.json
 
 serviceAccountKey.json
 *.db
+sandbox.py
+Topics/*
+exec/*
+config.json
