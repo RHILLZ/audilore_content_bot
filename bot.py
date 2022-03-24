@@ -64,12 +64,14 @@ class Bot:
                     story['title'] = clip.find_element(By.TAG_NAME, 'h4').text
                     story['sub_title'] = clip.find_element(By.TAG_NAME, 'h3').text
                     story['duration'] = clip.find_element(By.TAG_NAME, 'span').text.split(' ')[0]
+                    story['posted'] = clip.find_elements(By.TAG_NAME, 'span')[2].text
                     story['imgURL'] = clip.find_element(By.TAG_NAME, 'img').get_attribute('src')
                     stories.append(story)
                 else:
                     continue
-            with open('Topics/{}.json'.format(topic), 'w') as f:
-                f.write(json.dumps(stories, indent=2))
+            # with open('Topics/{}.json'.format(topic), 'w') as f:
+            #     f.write(json.dumps(stories, indent=2))
+            pprint(stories[0])
             self.driver.quit()
             return stories[0]
 

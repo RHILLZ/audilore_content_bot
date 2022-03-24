@@ -3,6 +3,8 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 import pyrebase
 import json
+from decouple import config
+
 
 
 
@@ -21,6 +23,7 @@ class Firebase:
         self.pw = 'audilore8688'
         self.user = self.auth.sign_in_with_email_and_password(self.email, self.pw)
         self.token = self.user['idToken']
+        # self.firebase_id ='GzfdiR4JxEckxOY2uAssKN0K6Iu1'
         
   
 
@@ -37,8 +40,8 @@ class Firebase:
 
     def addFilesToStorage(self, files, topic):
         clip_id = files[0].split('.')[0]
-        self.storage.child('Stories/{}/{}/{}'.format(topic,clip_id,files[0])).put(files[0])
-        self.storage.child('Stories/{}/{}/{}'.format(topic,clip_id,files[1])).put(files[1])
+        self.storage.child('BotStories/{}/{}/{}'.format(topic,clip_id,files[0])).put(files[0])
+        self.storage.child('BotStories/{}/{}/{}'.format(topic,clip_id,files[1])).put(files[1])
         return
 
     def getAudioClipURL(self, filename, topic, clip_id):
