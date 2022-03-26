@@ -6,7 +6,8 @@ import json
 from decouple import config
 
 
-
+firebase_email=config('FIREBASE_EMAIL')
+firebase_pw=config('FIREBASE_PW')
 
 class Firebase:
     def __init__(self) -> None:
@@ -19,11 +20,11 @@ class Firebase:
         self.db = firestore.client()
         self.collection = 'stories'
         self.auth = self.pyre.auth()
-        self.email = 'bot@audilore.com'
-        self.pw = 'audilore8688'
+        self.email = firebase_email
+        self.pw = firebase_pw
         self.user = self.auth.sign_in_with_email_and_password(self.email, self.pw)
         self.token = self.user['idToken']
-        # self.firebase_id ='GzfdiR4JxEckxOY2uAssKN0K6Iu1'
+       
         
   
 
@@ -31,7 +32,7 @@ class Firebase:
     def createStory(self, story):
         isSuccessful = False
         try:
-            self.db.collection(self.collection).document(story['id']).set(story)
+            self.db.collection(self.collection).document(story['storyId']).set(story)
             isSuccessful = True
         except:
             # Should send alert that story could not be posted
@@ -46,7 +47,7 @@ class Firebase:
 
     def getAudioClipURL(self, filename, topic, clip_id):
         token = self.token
-        audioURL = self.storage.child(f'Stories/{topic}/{clip_id}/{filename}').get_url(token)
+        audioURL = self.storage.child(f'BotStories/{topic}/{clip_id}/{filename}').get_url(token)
         return audioURL
     
     def getImgURL(self,filename, topic, clip_id):
