@@ -5,18 +5,22 @@ import ffmpegio
 import requests
 from pprint import pprint
 from datetime import timedelta
+from decouple import config
 
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
-
+driver_path = config('CHROMEDRIVER_PATH')
+site_url_format = config('SITE_URL_FORMAT')
+stream_url_format = config('STREAM_URL_FORMAT')
 class Bot:
     def __init__(self):
-        self.user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.51 Safari/537.36'
-        self.service = Service('/Users/rhillx/Downloads/chromedriver')
+        self.user_agent = config('USER_AGENT')
+        self.service = Service(driver_path)
         self.options = webdriver.ChromeOptions()
+        self.options.headless = True
         self.driver = webdriver.Chrome(service=self.service, options=self.options)
 
         
@@ -37,12 +41,12 @@ class Bot:
             f.write(json.dumps(clips,indent=2))
 
     # This function will return a single story object
-    def fetchClip(self):
+    def fetchClip(self, topic):
         # GET A TOPIC FROM LIST OF TOPICS
-        with open('items.txt', 'r') as f:
-            topicss = f.readlines()
-            topic = random.choice(topicss).split("\n")[0]
-            print(topic)
+        # with open('items.txt', 'r') as f:
+        #     topicss = f.readlines()
+        #     topic = random.choice(topicss).split("\n")[0]
+        #     print(topic)
         # CHECK IF TOPIC JSON FILE EXISTS
         stories = []
         try:
@@ -51,7 +55,7 @@ class Bot:
             # self.driver.quit()
             return stories[0]            
         except:
-            self.driver.get("https://search.audioburst.com/playlist/{}".format(topic))
+            self.driver.get(site_url_format.format(topic))
             # FIND ALL THE SUB CATEGORIES
             clips = self.driver.find_elements(By.CLASS_NAME, 'burst-card')
             # # LOOP THROUGH SUBs and CLICK TO GOTO SUB PAGE
@@ -69,8 +73,8 @@ class Bot:
                     stories.append(story)
                 else:
                     continue
-            # with open('Topics/{}.json'.format(topic), 'w') as f:
-            #     f.write(json.dumps(stories, indent=2))
+            with open('Topics/{}.json'.format(topic), 'w') as f:
+                f.write(json.dumps(stories, indent=2))
             pprint(stories[0])
             self.driver.quit()
             return stories[0]
@@ -81,7 +85,7 @@ class Bot:
     # PLACE FFMPEG EXECUTABLE IN EXEC FOLDER
     def transcodeAudio(self, clipId):
         file = '{}.mp3'.format(clipId)
-        stream_url ='https://storageaudiobursts.azureedge.net/stream/{}/outputlist.m3u8'.format(clipId)
+        stream_url =stream_url_format.format(clipId)
         ffmpegio.set_path(ffmpeg_path='./exec/ffmpeg', ffprobe_path='./exec/ffprobe')
         ffmpegio.transcode(stream_url, file)
         return file
