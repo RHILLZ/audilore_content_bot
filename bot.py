@@ -15,6 +15,8 @@ from selenium.webdriver.common.keys import Keys
 driver_path = config('CHROMEDRIVER_PATH')
 site_url_format = config('SITE_URL_FORMAT')
 stream_url_format = config('STREAM_URL_FORMAT')
+ffmpeg_env_path=config('FFMPEG_PATH')
+ffprobe_env_path=config('FFPROBE_PATH')
 class Bot:
     def __init__(self):
         self.user_agent = config('USER_AGENT')
@@ -86,7 +88,7 @@ class Bot:
     def transcodeAudio(self, clipId):
         file = '{}.mp3'.format(clipId)
         stream_url =stream_url_format.format(clipId)
-        ffmpegio.set_path(ffmpeg_path='./exec/ffmpeg', ffprobe_path='./exec/ffprobe')
+        ffmpegio.set_path(ffmpeg_path=ffmpeg_env_path, ffprobe_path=ffprobe_env_path)
         ffmpegio.transcode(stream_url, file)
         return file
 
