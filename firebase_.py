@@ -52,6 +52,6 @@ class Firebase:
     
     def getImgURL(self,filename, topic, clip_id):
         token = self.token
-        imageURL = self.storage.child(f'Stories/{topic}/{clip_id}/{filename}').get_url(token)
+        imageURL = self.storage.child(f'BotStories/{topic}/{clip_id}/{filename}').get_url(token)
         return imageURL
       
